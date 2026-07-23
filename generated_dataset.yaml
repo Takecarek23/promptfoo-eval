@@ -1,0 +1,101 @@
+# ============================================================
+# BỘ TESTCASE ĐÁNH GIÁ CHẤT LƯỢNG (TESTSET OPTIMIZED)
+# ============================================================
+
+# ---------------------- CHƯƠNG 1: TỔNG QUAN ----------------------
+
+- vars:
+    context: file://./raw/ch01_introduction.md
+    question: "AI Agent là gì và khác gì so với chatbot thông thường?"
+  assert:
+    - type: icontains
+      value: "Perception"
+    - type: llm-rubric
+      value: >
+        Giải thích đúng định nghĩa AI Agent (nhận thức môi trường, đưa ra quyết định, thực hiện hành động).
+        Nêu rõ sự khác biệt: Chatbot xử lý đơn bước (single-turn/phản xạ), AI Agent xử lý đa bước (multi-step/tự chủ).
+      provider: ollama:chat:llama3.2
+
+- vars:
+    context: file://./raw/ch01_introduction.md
+    question: "Liệt kê các khái niệm cốt lõi cần nắm khi học AI Agent theo tài liệu."
+  assert:
+    # Khóa cứng các từ khóa quan trọng để tránh lỗi Judge báo "Thiếu Tool Calling" oan
+    - type: icontains
+      value: "Tool Calling"
+    - type: icontains
+      value: "Prompt Engineering"
+    - type: llm-rubric
+      value: >
+        Liệt kê đủ các khái niệm trong bài: Prompt Engineering, Tool Calling, Memory Management,
+        Planning & Reasoning, Evaluation, Safety & Alignment.
+      provider: ollama:chat:llama3.2
+
+# ---------------------- CHƯƠNG 2: NỀN TẢNG KỸ THUẬT ----------------------
+
+- vars:
+    context: file://./raw/ch02_foundations.md
+    question: "ReAct Pattern là gì? Hãy giải thích cơ chế hoạt động của nó."
+  assert:
+    - type: icontains
+      value: "Thought"
+    - type: icontains
+      value: "Action"
+    - type: llm-rubric
+      value: >
+        Giải thích đúng chu trình luân phiên giữa Suy luận (Thought) và Hành động (Action),
+        kèm Quan sát (Observation). Chấp nhận cả dạng gạch đầu dòng hoặc giải thích đoạn văn.
+      provider: ollama:chat:llama3.2
+
+- vars:
+    context: file://./raw/ch02_foundations.md
+    question: "AI Agent có những loại memory nào? Mô tả ngắn gọn từng loại."
+  assert:
+    - type: icontains
+      value: "In-context"
+    - type: icontains
+      value: "External"
+    - type: llm-rubric
+      value: >
+        Liệt kê và mô tả ngắn gọn đủ 4 loại memory: In-context memory (ngắn hạn), External memory (dài hạn),
+        Episodic memory, và Semantic memory.
+      provider: ollama:chat:llama3.2
+
+# ---------------------- CHƯƠNG 3: FRAMEWORKS ----------------------
+
+- vars:
+    context: file://./raw/ch03_frameworks.md
+    question: "LangGraph khác gì so với LangChain, và khi nào nên dùng LangGraph thay vì LangChain?"
+  assert:
+    - type: icontains
+      value: "LangGraph"
+    - type: icontains
+      value: "LangChain"
+    - type: llm-rubric
+      value: >
+        Nêu được LangGraph dựng agent dạng đồ thị (directed graph), kiểm soát luồng tốt cho agent phức tạp/stateful.
+        LangChain dùng để prototype nhanh nhưng khó kiểm soát luồng phức tạp.
+      provider: ollama:chat:llama3.2
+
+# ---------------------- CHƯƠNG 4: KỸ THUẬT NÂNG CAO ----------------------
+
+- vars:
+    context: file://./raw/ch04_advanced.md
+    question: "Tree of Thoughts (ToT) là gì và cơ chế hoạt động của nó khác gì so với suy luận tuyến tính thông thường?"
+  assert:
+    - type: icontains
+      value: "song song"
+    - type: llm-rubric
+      value: >
+        Nêu được ToT cho phép khám phá nhiều hướng suy luận song song thay vì tuyến tính.
+        Có đề cập các bước: sinh thought, đánh giá độ hứa hẹn và mở rộng thought tốt.
+      provider: ollama:chat:llama3.2
+
+# ---------------------- TESTCASE BẪY (CHỐNG ẢO GIÁC) ----------------------
+
+- vars:
+    context: file://./raw/ch01_introduction.md
+    question: "Hướng dẫn cách cài đặt Docker Desktop trên hệ điều hành Windows?"
+  assert:
+    - type: icontains
+      value: "Tài liệu không cung cấp thông tin này"

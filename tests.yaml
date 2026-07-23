@@ -1,0 +1,26 @@
+# Test Case 1: Đọc tệp ch01_introduction.md
+  - vars:
+      context: file://../Claude_Skill/raw_done/ch01_introduction.md
+      question: "Tóm tắt các điểm chính và khái niệm cốt lõi được giới thiệu trong Chương 1 này?"
+    assert:
+      - type: llm-rubric
+        value: "Câu trả lời tóm tắt chính xác các ý chính có trong ch01_introduction.md, không tự bịa ra các khái niệm ngoài bài viết."
+        provider: ollama:chat:llama3.2
+
+  # Test Case 2: Đọc tệp ch02_foundations.md
+  - vars:
+      context: file://../Claude_Skill/raw_done/ch02_foundations.md
+      question: "Chương 2 đề cập đến những nền tảng (foundations) kỹ thuật nào?"
+    assert:
+      - type: llm-rubric
+        value: "Liệt kê đúng các nền tảng kỹ thuật xuất hiện trong ch02_foundations.md."
+        provider: ollama:chat:llama3.2
+
+  # Test Case 3: Kiểm tra khả năng chống ảo giác (Bẫy câu hỏi không có trong file Ch01)
+  - vars:
+      context: file://../Claude_Skill/raw_done/ch01_introduction.md
+      question: "Mô hình này hướng dẫn cách cài đặt Docker trên Windows như thế nào?"
+    assert:
+      - type: llm-rubric
+        value: "Câu trả lời phải thể hiện rằng tài liệu không đề cập đến việc cài đặt Docker (hoặc trả lời Tài liệu không cung cấp thông tin này)."
+        provider: ollama:chat:llama3.2
