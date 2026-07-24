@@ -1,83 +1,198 @@
-# ============================================================
-# BỘ TESTCASE ĐÁNH GIÁ CHẤT LƯỢNG (TESTSET OPTIMIZED)
-# ============================================================
-
-# ---------------------- CHƯƠNG 1: TỔNG QUAN ----------------------
+# ==========================================
+# CHƯƠNG 1: TỔNG QUAN VỀ AI AGENT
+# ==========================================
 
 - vars:
     context: file://./raw/ch01_introduction.md
-    question: "AI Agent là gì và khác gì so với chatbot thông thường?"
+    question: "Định nghĩa chính thức của AI Agent theo tài liệu là gì và điểm khác biệt cốt lõi giữa AI Agent với chatbot thông thường?"
   assert:
     - type: icontains
       value: "Perception"
+    - type: icontains
+      value: "Reasoning"
+    - type: icontains
+      value: "Action"
     - type: llm-rubric
-      value: >
-        Giải thích đúng định nghĩa AI Agent (nhận thức môi trường, đưa ra quyết định, thực hiện hành động).
-        Nêu rõ sự khác biệt: Chatbot xử lý đơn bước (single-turn/phản xạ), AI Agent xử lý đa bước (multi-step/tự chủ).
+      value: "Nêu đúng công thức Agent = Perception + Reasoning + Action. Giải thích được chatbot chỉ phản xạ đơn thuần (input->output), còn Agent nhận mục tiêu, lập kế hoạch, thực thi nhiều bước và đánh giá."
       provider: ollama:chat:llama3.2
 
 - vars:
     context: file://./raw/ch01_introduction.md
-    question: "Liệt kê các khái niệm cốt lõi cần nắm khi học AI Agent theo tài liệu."
+    question: "Kể tên 5 mức độ tự chủ của AI Agent từ thấp đến cao được trình bày trong tài liệu."
   assert:
-    # Khóa cứng các từ khóa quan trọng để tránh lỗi Judge báo "Thiếu Tool Calling" oan
     - type: icontains
-      value: "Tool Calling"
+      value: "Rule-based Agent"
     - type: icontains
-      value: "Prompt Engineering"
-    - type: llm-rubric
-      value: >
-        Liệt kê đủ các khái niệm trong bài: Prompt Engineering, Tool Calling, Memory Management,
-        Planning & Reasoning, Evaluation, Safety & Alignment.
+      value: "Reactive Agent"
+    - type: icontains
+      value: "Deliberative Agent"
+    - type: icontains
+      value: "Learning Agent"
+    - type: icontains
+      value: "Autonomous LLM Agent"
       provider: ollama:chat:llama3.2
 
-# ---------------------- CHƯƠNG 2: NỀN TẢNG KỸ THUẬT ----------------------
+- vars:
+    context: file://./raw/ch01_introduction.md
+    question: "Nêu 5 yếu tố thúc đẩy sự bùng nổ của AI Agent trong giai đoạn 2023–2026."
+  assert:
+    - type: llm-rubric
+      value: "Liệt kê đủ 5 yếu tố: LLM mạnh hơn, Tool use, Long context, Frameworks trưởng thành, Nhu cầu thực tế tự động hóa."
+      provider: ollama:chat:llama3.2
+
+- vars:
+    context: file://./raw/ch01_introduction.md
+    question: "Vẽ sơ đồ hoặc mô tả cấu trúc của 4 khối thành phần cốt lõi nằm trong sơ đồ Kiến trúc tổng quát của một LLM-based Agent."
+  assert:
+    - type: icontains
+      value: "LLM Core"
+    - type: icontains
+      value: "Memory"
+    - type: icontains
+      value: "Tools"
+    - type: icontains
+      value: "Planning Module"
+      provider: ollama:chat:llama3.2
+
+- vars:
+    context: file://./raw/ch01_introduction.md
+    question: "Phân biệt 3 loại kiến trúc AI Agent theo phân loại kiến trúc trong Chương 1."
+  assert:
+    - type: llm-rubric
+      value: "Phân biệt đúng 3 loại: Single Agent (một agent xử lý toàn bộ), Multi-Agent (nhiều agent phối hợp chuyên hóa), Hierarchical (cấp cao điều phối cấp thấp)."
+      provider: ollama:chat:llama3.2
+
+# ==========================================
+# CHƯƠNG 2: NỀN TẢNG KỸ THUẬT
+# ==========================================
 
 - vars:
     context: file://./raw/ch02_foundations.md
-    question: "ReAct Pattern là gì? Hãy giải thích cơ chế hoạt động của nó."
+    question: "Mức nhiệt độ (temperature) nào phù hợp cho AI Agent cần đưa ra quyết định chính xác và tại sao?"
+  assert:
+    - type: icontains
+      value: "thấp"
+    - type: llm-rubric
+      value: "Nêu được giá trị temperature thấp (0 - 0.2) giúp mô hình hoạt động tất định, tái lập được và phù hợp với agent cần logic chính xác."
+      provider: ollama:chat:llama3.2
+
+- vars:
+    context: file://./raw/ch02_foundations.md
+    question: "Mô hình ReAct Pattern (Reason + Act) hoạt động như thế nào qua các bước chính?"
   assert:
     - type: icontains
       value: "Thought"
     - type: icontains
       value: "Action"
+    - type: icontains
+      value: "Observation"
     - type: llm-rubric
-      value: >
-        Giải thích đúng chu trình luân phiên giữa Suy luận (Thought) và Hành động (Action),
-        kèm Quan sát (Observation). Chấp nhận cả dạng gạch đầu dòng hoặc giải thích đoạn văn.
+      value: "Mô tả vòng lặp luân phiên giữa suy luận (Thought), thực thi hành động/công cụ (Action) và quan sát kết quả thu được (Observation)."
       provider: ollama:chat:llama3.2
 
 - vars:
     context: file://./raw/ch02_foundations.md
-    question: "AI Agent có những loại memory nào? Mô tả ngắn gọn từng loại."
+    question: "Liệt kê và phân biệt 4 loại bộ nhớ (Memory) trong AI Agent."
   assert:
     - type: icontains
-      value: "In-context"
+      value: "In-context memory"
     - type: icontains
-      value: "External"
+      value: "External memory"
+    - type: icontains
+      value: "Episodic memory"
+    - type: icontains
+      value: "Semantic memory"
     - type: llm-rubric
-      value: >
-        Liệt kê và mô tả ngắn gọn đủ 4 loại memory: In-context memory (ngắn hạn), External memory (dài hạn),
-        Episodic memory, và Semantic memory.
+      value: "Giải thích rõ định nghĩa/đặc điểm ngắn gọn của cả 4 loại bộ nhớ này theo đúng nội dung Chương 2."
       provider: ollama:chat:llama3.2
 
-# ---------------------- CHƯƠNG 3: FRAMEWORKS ----------------------
+- vars:
+    context: file://./raw/ch02_foundations.md
+    question: "Quy trình RAG cơ bản bao gồm 5 bước nào để đưa dữ liệu vào Vector Database và truy xuất?"
+  assert:
+    - type: llm-rubric
+      value: "Nêu đúng 5 bước: Chunk văn bản -> Embed thành vector -> Lưu vào vector DB -> Embed query khi cần -> Đưa chunk gần nhất vào context cho LLM."
+      provider: ollama:chat:llama3.2
+
+- vars:
+    context: file://./raw/ch02_foundations.md
+    question: "Liệt kê các metric cơ bản dùng để đánh giá hiệu năng và chất lượng của AI Agent."
+  assert:
+    - type: icontains
+      value: "Task completion rate"
+    - type: icontains
+      value: "Step efficiency"
+    - type: icontains
+      value: "Tool usage accuracy"
+    - type: icontains
+      value: "Hallucination rate"
+      provider: ollama:chat:llama3.2
+
+# ==========================================
+# CHƯƠNG 3: FRAMEWORKS & TOOLS
+# ==========================================
 
 - vars:
     context: file://./raw/ch03_frameworks.md
-    question: "LangGraph khác gì so với LangChain, và khi nào nên dùng LangGraph thay vì LangChain?"
+    question: "LangGraph là gì, triết lý biểu diễn Agent của nó như thế nào và các khái niệm cốt lõi của nó bao gồm những gì?"
   assert:
     - type: icontains
-      value: "LangGraph"
+      value: "State"
     - type: icontains
-      value: "LangChain"
+      value: "Node"
+    - type: icontains
+      value: "Edge"
+    - type: icontains
+      value: "Graph"
     - type: llm-rubric
-      value: >
-        Nêu được LangGraph dựng agent dạng đồ thị (directed graph), kiểm soát luồng tốt cho agent phức tạp/stateful.
-        LangChain dùng để prototype nhanh nhưng khó kiểm soát luồng phức tạp.
+      value: "Nêu được triết lý Agent = Graph (đỉnh = action, cạnh = điều kiện) và giải thích 4 thành phần: State, Node, Edge, Graph."
       provider: ollama:chat:llama3.2
 
-# ---------------------- CHƯƠNG 4: KỸ THUẬT NÂNG CAO ----------------------
+- vars:
+    context: file://./raw/ch03_frameworks.md
+    question: "So sánh điểm mạnh và case sử dụng tiêu biểu của CrewAI và LlamaIndex."
+  assert:
+    - type: llm-rubric
+      value: " CrewAI: Thế mạnh về Multi-agent dễ dùng, workflow nhiều vai trò. LlamaIndex: Thế mạnh về RAG chuyên sâu, Q&A trên dữ liệu lớn."
+      provider: ollama:chat:llama3.2
+
+- vars:
+    context: file://./raw/ch03_frameworks.md
+    question: "Khi nào nên dùng LangChain và khi nào nên chuyển sang LangGraph?"
+  assert:
+    - type: llm-rubric
+      value: "Dùng LangChain khi cần prototype nhanh, tích hợp nhiều LLM/connector. Chuyển sang LangGraph khi cần logic agent có trạng thái phức tạp hoặc đồ thị có điều kiện."
+      provider: ollama:chat:llama3.2
+
+- vars:
+    context: file://./raw/ch03_frameworks.md
+    question: "Liệt kê 3 tính năng nâng cao nổi bật của LangGraph giúp kiểm soát luồng thực thi Agent."
+  assert:
+    - type: icontains
+      value: "Human-in-the-loop"
+    - type: icontains
+      value: "Checkpointing"
+    - type: icontains
+      value: "Streaming"
+      provider: ollama:chat:llama3.2
+
+- vars:
+    context: file://./raw/ch03_frameworks.md
+    question: "Hệ sinh thái frameworks AI Agent được chia làm 4 tầng nào? Liệt kê tên 4 tầng đó."
+  assert:
+    - type: icontains
+      value: "LLM Providers"
+    - type: icontains
+      value: "Orchestration Frameworks"
+    - type: icontains
+      value: "Agent Frameworks"
+    - type: icontains
+      value: "Infrastructure"
+      provider: ollama:chat:llama3.2
+
+# ==========================================
+# CHƯƠNG 4: KỸ THUẬT NÂNG CAO
+# ==========================================
 
 - vars:
     context: file://./raw/ch04_advanced.md
@@ -91,11 +206,39 @@
         Có đề cập các bước: sinh thought, đánh giá độ hứa hẹn và mở rộng thought tốt.
       provider: ollama:chat:llama3.2
 
-# ---------------------- TESTCASE BẪY (CHỐNG ẢO GIÁC) ----------------------
-
 - vars:
-    context: file://./raw/ch01_introduction.md
-    question: "Hướng dẫn cách cài đặt Docker Desktop trên hệ điều hành Windows?"
+    context: file://./raw/ch04_advanced.md
+    question: "Mô tả 4 mô hình phối hợp phổ biến trong hệ thống Multi-Agent (Multi-Agent Coordination)."
   assert:
     - type: icontains
-      value: "Tài liệu không cung cấp thông tin này"
+      value: "Orchestrator – Worker"
+    - type: icontains
+      value: "Peer-to-Peer"
+    - type: icontains
+      value: "Pipeline"
+    - type: icontains
+      value: "Blackboard"
+      provider: ollama:chat:llama3.2
+- vars:
+    context: file://./raw/ch04_advanced.md
+    question: "Nêu định nghĩa Tấn công Prompt Injection trong AI Agent và 4 giải pháp phòng thủ."
+  assert:
+    - type: llm-rubric
+      value: "Nêu được đây là nguy cơ từ dữ liệu bên ngoài chứa lệnh độc hại nhằm ghi đè chỉ dẫn. Nêu đúng các giải pháp: Phân tách system/user context, Validate/sanitize input, Dùng sandboxed LLM, Constitutional AI."
+      provider: ollama:chat:llama3.2
+
+- vars:
+    context: file://./raw/ch04_advanced.md
+    question: "Kỹ thuật Reranking trong Advanced RAG là gì và kể tên một số API/công cụ hỗ trợ?"
+  assert:
+    - type: llm-rubric
+      value: "Giải thích được Reranking là việc dùng cross-encoder sắp xếp lại top-k chunks vừa retrieve theo độ phù hợp thực sự. Kể tên được các công cụ như Cohere Rerank, BGE Reranker, hoặc FlashRank."
+      provider: ollama:chat:llama3.2
+
+- vars:
+    context: file://./raw/ch04_advanced.md
+    question: "Khi nào nên Fine-tune mô hình thay vì chỉ làm Prompt Engineering?"
+  assert:
+    - type: llm-rubric
+      value: "Nêu đúng các trường hợp: Cần định dạng output rất đặc thù, Kiến thức domain quá chuyên biệt, Chi phí inference quá cao (fine-tune model nhỏ hơn)."
+      provider: ollama:chat:llama3.2
