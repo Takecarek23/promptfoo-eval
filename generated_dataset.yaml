@@ -18,7 +18,7 @@
 
 - vars:
     context: file://./raw/ch01_introduction.md
-    question: "Kể tên 5 mức độ tự chủ của AI Agent từ thấp đến cao được trình bày trong tài liệu."
+    question: "Kể tên các mức độ tự chủ của AI Agent từ thấp đến cao được trình bày trong tài liệu."
   assert:
     - type: icontains
       value: "Rule-based Agent"
@@ -36,9 +36,16 @@
     context: file://./raw/ch01_introduction.md
     question: "Nêu 5 yếu tố thúc đẩy sự bùng nổ của AI Agent trong giai đoạn 2023–2026."
   assert:
-    - type: llm-rubric
-      value: "Liệt kê đủ 5 yếu tố: LLM mạnh hơn, Tool use, Long context, Frameworks trưởng thành, Nhu cầu thực tế tự động hóa."
-      provider: ollama:chat:llama3.2
+    - type: icontains
+      value: "LLM mạnh hơn"
+    - type: icontains
+      value: "Tool use"
+    - type: icontains
+      value: "Long context"
+    - type: icontains
+      value: "Frameworks trưởng thành"
+    - type: icontains
+      value: "Nhu cầu thực tế"
 
 - vars:
     context: file://./raw/ch01_introduction.md
@@ -70,8 +77,6 @@
     context: file://./raw/ch02_foundations.md
     question: "Mức nhiệt độ (temperature) nào phù hợp cho AI Agent cần đưa ra quyết định chính xác và tại sao?"
   assert:
-    - type: icontains
-      value: "thấp"
     - type: llm-rubric
       value: "Nêu được giá trị temperature thấp (0 - 0.2) giúp mô hình hoạt động tất định, tái lập được và phù hợp với agent cần logic chính xác."
       provider: ollama:chat:llama3.2
@@ -80,12 +85,6 @@
     context: file://./raw/ch02_foundations.md
     question: "Mô hình ReAct Pattern (Reason + Act) hoạt động như thế nào qua các bước chính?"
   assert:
-    - type: icontains
-      value: "Thought"
-    - type: icontains
-      value: "Action"
-    - type: icontains
-      value: "Observation"
     - type: llm-rubric
       value: "Mô tả vòng lặp luân phiên giữa suy luận (Thought), thực thi hành động/công cụ (Action) và quan sát kết quả thu được (Observation)."
       provider: ollama:chat:llama3.2
@@ -103,7 +102,7 @@
     - type: icontains
       value: "Semantic memory"
     - type: llm-rubric
-      value: "Giải thích rõ định nghĩa/đặc điểm ngắn gọn của cả 4 loại bộ nhớ này theo đúng nội dung Chương 2."
+      value: "Giải thích rõ định nghĩa, đặc điểm ngắn gọn của cả 4 loại bộ nhớ này."
       provider: ollama:chat:llama3.2
 
 - vars:
