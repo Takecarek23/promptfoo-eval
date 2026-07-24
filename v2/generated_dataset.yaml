@@ -1,0 +1,594 @@
+# ==========================================
+# CHƯƠNG 1: TỔNG QUAN VỀ AI AGENT
+# ==========================================
+
+- vars:
+    context: file://./raw/ch01_introduction.md
+    question: "Định nghĩa chính thức của AI Agent theo tài liệu là gì và điểm khác biệt cốt lõi giữa AI Agent với chatbot thông thường?"
+  assert:
+    - type: contains-any
+      weight: 0.5
+      value: ["Perception", "Nhận thức"]
+    - type: contains-any
+      weight: 0.5
+      value: ["Reasoning", "Suy luận"]
+    - type: contains-any
+      weight: 0.5
+      value: ["Action", "Hành động"]
+    - type: llm-rubric
+      weight: 2
+      value: "Nêu đúng công thức Agent = Perception + Reasoning + Action. Giải thích được chatbot chỉ phản xạ đơn thuần (input->output), còn Agent nhận mục tiêu, lập kế hoạch, thực thi nhiều bước và đánh giá."
+
+- vars:
+    context: file://./raw/ch01_introduction.md
+    question: "Kể tên 5 mức độ tự chủ của AI Agent từ thấp đến cao được trình bày trong tài liệu."
+  assert:
+    - type: icontains
+      weight: 0.4
+      value: "Rule-based Agent"
+    - type: icontains
+      weight: 0.4
+      value: "Reactive Agent"
+    - type: icontains
+      weight: 0.4
+      value: "Deliberative Agent"
+    - type: icontains
+      weight: 0.4
+      value: "Learning Agent"
+    - type: icontains
+      weight: 0.4
+      value: "Autonomous LLM Agent"
+    - type: llm-rubric
+      weight: 2
+      value: "Liệt kê đủ 5 mức từ thấp đến cao theo đúng thứ tự: Rule-based, Reactive, Deliberative, Learning, Autonomous LLM Agent, không bỏ sót mục nào."
+
+- vars:
+    context: file://./raw/ch01_introduction.md
+    question: "Nêu 5 yếu tố thúc đẩy sự bùng nổ của AI Agent trong giai đoạn 2023–2026."
+  assert:
+    - type: llm-rubric
+      weight: 1
+      value: "Liệt kê đủ 5 yếu tố: LLM mạnh hơn, Tool use, Long context, Frameworks trưởng thành, Nhu cầu thực tế tự động hóa."
+
+- vars:
+    context: file://./raw/ch01_introduction.md
+    question: "Mô tả cấu trúc của 4 khối thành phần cốt lõi trong sơ đồ Kiến trúc tổng quát của một LLM-based Agent."
+  assert:
+    - type: icontains
+      weight: 0.4
+      value: "LLM Core"
+    - type: icontains
+      weight: 0.4
+      value: "Memory"
+    - type: icontains
+      weight: 0.4
+      value: "Tools"
+    - type: icontains
+      weight: 0.4
+      value: "Planning Module"
+    - type: llm-rubric
+      weight: 2
+      value: "Mô tả đúng 4 khối: LLM Core (bộ não/reasoning engine), Memory, Tools, Planning Module, và nêu được quan hệ giữa chúng (LLM Core kết nối với Memory và Tools, cả hai dẫn vào Planning Module)."
+
+- vars:
+    context: file://./raw/ch01_introduction.md
+    question: "Phân biệt 3 loại kiến trúc AI Agent theo phân loại kiến trúc trong Chương 1."
+  assert:
+    - type: llm-rubric
+      weight: 1
+      value: "Phân biệt đúng 3 loại: Single Agent (một agent xử lý toàn bộ), Multi-Agent (nhiều agent phối hợp chuyên hóa), Hierarchical (cấp cao điều phối cấp thấp)."
+
+# --- Bẫy chống ảo giác (Chương 1) ---
+- vars:
+    context: file://./raw/ch01_introduction.md
+    question: "Tài liệu này hướng dẫn cách cài đặt Docker trên Windows như thế nào?"
+  assert:
+    - type: llm-rubric
+      weight: 1
+      value: "Câu trả lời phải nêu rõ tài liệu không chứa thông tin về cài đặt Docker, dùng đúng mẫu câu từ chối, không bịa ra hướng dẫn cài đặt."
+
+# --- Câu hỏi mơ hồ (test khả năng hỏi lại thay vì đoán) ---
+- vars:
+    context: file://./raw/ch01_introduction.md
+    question: "Cái đó hoạt động ra sao?"
+  assert:
+    - type: llm-rubric
+      weight: 1
+      value: "Vì câu hỏi không rõ 'cái đó' là gì, câu trả lời tốt nên hỏi lại ngắn gọn để làm rõ đối tượng, thay vì tự chọn đại một khái niệm trong tài liệu để trả lời."
+
+# ==========================================
+# CHƯƠNG 2: NỀN TẢNG KỸ THUẬT
+# ==========================================
+
+- vars:
+    context: file://./raw/ch02_foundations.md
+    question: "Mức nhiệt độ (temperature) nào phù hợp cho AI Agent cần đưa ra quyết định chính xác và tại sao?"
+  assert:
+    - type: icontains
+      weight: 0.5
+      value: "thấp"
+    - type: llm-rubric
+      weight: 2
+      value: "Nêu được giá trị temperature thấp (0 - 0.2) giúp mô hình hoạt động tất định, tái lập được và phù hợp với agent cần logic chính xác."
+
+- vars:
+    context: file://./raw/ch02_foundations.md
+    question: "Mô hình ReAct Pattern (Reason + Act) hoạt động như thế nào qua các bước chính?"
+  assert:
+    - type: contains-any
+      weight: 0.4
+      value: ["Thought", "Suy luận"]
+    - type: contains-any
+      weight: 0.4
+      value: ["Action", "Hành động"]
+    - type: contains-any
+      weight: 0.4
+      value: ["Observation", "Quan sát"]
+    - type: llm-rubric
+      weight: 2
+      value: "Mô tả vòng lặp luân phiên giữa suy luận (Thought), thực thi hành động/công cụ (Action) và quan sát kết quả thu được (Observation)."
+
+- vars:
+    context: file://./raw/ch02_foundations.md
+    question: "Liệt kê và phân biệt 4 loại bộ nhớ (Memory) trong AI Agent."
+  assert:
+    - type: icontains
+      weight: 0.3
+      value: "In-context memory"
+    - type: icontains
+      weight: 0.3
+      value: "External memory"
+    - type: icontains
+      weight: 0.3
+      value: "Episodic memory"
+    - type: icontains
+      weight: 0.3
+      value: "Semantic memory"
+    - type: llm-rubric
+      weight: 2
+      value: "Giải thích rõ định nghĩa/đặc điểm ngắn gọn của cả 4 loại bộ nhớ này theo đúng nội dung Chương 2, không bỏ sót loại nào."
+
+- vars:
+    context: file://./raw/ch02_foundations.md
+    question: "Quy trình RAG cơ bản bao gồm 5 bước nào để đưa dữ liệu vào Vector Database và truy xuất?"
+  assert:
+    - type: llm-rubric
+      weight: 2
+      value: "Nêu đúng 5 bước theo đúng thứ tự: Chunk văn bản -> Embed thành vector -> Lưu vào vector DB -> Embed query khi cần -> Đưa chunk gần nhất vào context cho LLM."
+
+- vars:
+    context: file://./raw/ch02_foundations.md
+    question: "Liệt kê các metric cơ bản dùng để đánh giá hiệu năng và chất lượng của AI Agent."
+  assert:
+    - type: icontains
+      weight: 0.4
+      value: "Task completion rate"
+    - type: icontains
+      weight: 0.4
+      value: "Step efficiency"
+    - type: icontains
+      weight: 0.4
+      value: "Tool usage accuracy"
+    - type: icontains
+      weight: 0.4
+      value: "Hallucination rate"
+    - type: llm-rubric
+      weight: 1.5
+      value: "Liệt kê đầy đủ các metric có trong tài liệu (Task completion rate, Step efficiency, Tool usage accuracy, Hallucination rate, Latency, Cost per task), không bỏ sót mục nào."
+
+# --- Bẫy chống ảo giác (Chương 2) ---
+- vars:
+    context: file://./raw/ch02_foundations.md
+    question: "Chương này có đề cập mức lương trung bình của một AI Engineer tại Việt Nam năm 2026 không?"
+  assert:
+    - type: llm-rubric
+      weight: 1
+      value: "Câu trả lời phải nêu rõ tài liệu không chứa thông tin về mức lương AI Engineer, dùng đúng mẫu câu từ chối, không tự bịa ra con số lương."
+
+# ==========================================
+# CHƯƠNG 3: FRAMEWORKS & TOOLS
+# ==========================================
+
+- vars:
+    context: file://./raw/ch03_frameworks.md
+    question: "LangGraph là gì, triết lý biểu diễn Agent của nó như thế nào và các khái niệm cốt lõi của nó bao gồm những gì?"
+  assert:
+    - type: icontains
+      weight: 0.3
+      value: "State"
+    - type: icontains
+      weight: 0.3
+      value: "Node"
+    - type: icontains
+      weight: 0.3
+      value: "Edge"
+    - type: icontains
+      weight: 0.3
+      value: "Graph"
+    - type: llm-rubric
+      weight: 2
+      value: "Nêu được triết lý Agent = Graph (đỉnh = action, cạnh = điều kiện) và giải thích 4 thành phần: State, Node, Edge, Graph."
+
+- vars:
+    context: file://./raw/ch03_frameworks.md
+    question: "So sánh điểm mạnh và case sử dụng tiêu biểu của CrewAI và LlamaIndex."
+  assert:
+    - type: llm-rubric
+      weight: 1.5
+      value: "CrewAI: Thế mạnh về Multi-agent dễ dùng, workflow nhiều vai trò. LlamaIndex: Thế mạnh về RAG chuyên sâu, Q&A trên dữ liệu lớn."
+
+- vars:
+    context: file://./raw/ch03_frameworks.md
+    question: "Khi nào nên dùng LangChain và khi nào nên chuyển sang LangGraph?"
+  assert:
+    - type: llm-rubric
+      weight: 1.5
+      value: "Dùng LangChain khi cần prototype nhanh, tích hợp nhiều LLM/connector. Chuyển sang LangGraph khi cần logic agent có trạng thái phức tạp hoặc đồ thị có điều kiện."
+
+- vars:
+    context: file://./raw/ch03_frameworks.md
+    question: "Liệt kê 3 tính năng nâng cao nổi bật của LangGraph giúp kiểm soát luồng thực thi Agent."
+  assert:
+    - type: icontains
+      weight: 0.5
+      value: "Human-in-the-loop"
+    - type: icontains
+      weight: 0.5
+      value: "Checkpointing"
+    - type: icontains
+      weight: 0.5
+      value: "Streaming"
+    - type: llm-rubric
+      weight: 1.5
+      value: "Liệt kê đủ 3 tính năng: Human-in-the-loop, Checkpointing, Streaming, với mô tả ngắn cho mỗi tính năng."
+
+- vars:
+    context: file://./raw/ch03_frameworks.md
+    question: "Hệ sinh thái frameworks AI Agent được chia làm 4 tầng nào? Liệt kê tên 4 tầng đó."
+  assert:
+    - type: icontains
+      weight: 0.4
+      value: "LLM Providers"
+    - type: icontains
+      weight: 0.4
+      value: "Orchestration Frameworks"
+    - type: icontains
+      weight: 0.4
+      value: "Agent Frameworks"
+    - type: icontains
+      weight: 0.4
+      value: "Infrastructure"
+    - type: llm-rubric
+      weight: 1.5
+      value: "Liệt kê đúng thứ tự 4 tầng: LLM Providers, Orchestration Frameworks, Agent Frameworks, Infrastructure, mỗi tầng kèm ví dụ công cụ tiêu biểu nếu có trong tài liệu."
+
+# --- Bẫy chống ảo giác (Chương 3) ---
+- vars:
+    context: file://./raw/ch03_frameworks.md
+    question: "Chi phí license thương mại của LangGraph Enterprise là bao nhiêu?"
+  assert:
+    - type: llm-rubric
+      weight: 1
+      value: "Câu trả lời phải nêu rõ tài liệu không đề cập giá license, dùng đúng mẫu câu từ chối, không tự đưa ra con số giá."
+
+# ==========================================
+# CHƯƠNG 4: KỸ THUẬT NÂNG CAO
+# ==========================================
+
+- vars:
+    context: file://./raw/ch04_advanced.md
+    question: "Tree of Thoughts (ToT) là gì và cơ chế hoạt động của nó khác gì so với suy luận tuyến tính thông thường?"
+  assert:
+    - type: icontains
+      weight: 0.5
+      value: "song song"
+    - type: llm-rubric
+      weight: 2
+      value: >
+        Nêu được ToT cho phép khám phá nhiều hướng suy luận song song thay vì tuyến tính.
+        Có đề cập các bước: sinh thought, đánh giá độ hứa hẹn và mở rộng thought tốt.
+
+- vars:
+    context: file://./raw/ch04_advanced.md
+    question: "Mô tả 4 mô hình phối hợp phổ biến trong hệ thống Multi-Agent (Multi-Agent Coordination)."
+  assert:
+    - type: icontains
+      weight: 0.3
+      value: "Orchestrator"
+    - type: icontains
+      weight: 0.3
+      value: "Peer-to-Peer"
+    - type: icontains
+      weight: 0.3
+      value: "Pipeline"
+    - type: icontains
+      weight: 0.3
+      value: "Blackboard"
+    - type: llm-rubric
+      weight: 2
+      value: "Mô tả đúng và đầy đủ 4 mô hình: Orchestrator-Worker, Peer-to-Peer (Debate), Pipeline, Blackboard, không bỏ sót mô hình nào."
+
+- vars:
+    context: file://./raw/ch04_advanced.md
+    question: "Nêu định nghĩa Tấn công Prompt Injection trong AI Agent và 4 giải pháp phòng thủ."
+  assert:
+    - type: llm-rubric
+      weight: 2
+      value: "Nêu được đây là nguy cơ từ dữ liệu bên ngoài chứa lệnh độc hại nhằm ghi đè chỉ dẫn. Nêu đúng các giải pháp: Phân tách system/user context, Validate/sanitize input, Dùng sandboxed LLM, Constitutional AI."
+
+- vars:
+    context: file://./raw/ch04_advanced.md
+    question: "Kỹ thuật Reranking trong Advanced RAG là gì và kể tên một số API/công cụ hỗ trợ?"
+  assert:
+    - type: llm-rubric
+      weight: 2
+      value: "Giải thích được Reranking là việc dùng cross-encoder sắp xếp lại top-k chunks vừa retrieve theo độ phù hợp thực sự. Kể tên được các công cụ như Cohere Rerank, BGE Reranker, hoặc FlashRank."
+
+- vars:
+    context: file://./raw/ch04_advanced.md
+    question: "Khi nào nên Fine-tune mô hình thay vì chỉ làm Prompt Engineering?"
+  assert:
+    - type: llm-rubric
+      weight: 1.5
+      value: "Nêu đúng các trường hợp: Cần định dạng output rất đặc thù, Kiến thức domain quá chuyên biệt, Chi phí inference quá cao (fine-tune model nhỏ hơn)."
+
+# --- Bẫy chống ảo giác (Chương 4) ---
+- vars:
+    context: file://./raw/ch04_advanced.md
+    question: "Tài liệu có đưa ra roadmap cụ thể để đạt chứng chỉ AWS Machine Learning Specialty không?"
+  assert:
+    - type: llm-rubric
+      weight: 1
+      value: "Câu trả lời phải nêu rõ tài liệu không đề cập đến chứng chỉ AWS, dùng đúng mẫu câu từ chối, không tự bịa ra roadmap học chứng chỉ."
+
+# --- Câu hỏi tổng hợp đa chương (kiểm tra khả năng trích dẫn nhiều nguồn) ---
+- vars:
+    context: file://./raw/ch04_advanced.md
+    question: "Guardrails và Human-in-the-loop khác nhau như thế nào trong việc đảm bảo an toàn cho Agent?"
+  assert:
+    - type: llm-rubric
+      weight: 2
+      value: "Phân biệt được Guardrails (lớp lọc input/output/tool tự động, áp dụng liên tục) với Human-in-the-loop (con người phê duyệt thủ công tại các điểm quyết định quan trọng), theo đúng mục 4.4.3 và 4.4.4 của tài liệu."
+
+# ==========================================
+# BỔ SUNG CHƯƠNG 1 (mở rộng độ phủ)
+# ==========================================
+
+- vars:
+    context: file://./raw/ch01_introduction.md
+    question: "Liệt kê các lĩnh vực ứng dụng thực tế của AI Agent và ví dụ tiêu biểu cho mỗi lĩnh vực."
+  assert:
+    - type: contains-any
+      weight: 0.3
+      value: ["Devin", "Lập trình"]
+    - type: contains-any
+      weight: 0.3
+      value: ["Perplexity", "Nghiên cứu"]
+    - type: llm-rubric
+      weight: 2
+      value: "Liệt kê đủ 6 lĩnh vực trong bảng: Lập trình, Nghiên cứu, Kinh doanh, Y tế, Giáo dục, Tài chính, kèm ví dụ ứng dụng tiêu biểu cho từng lĩnh vực, không bỏ sót."
+
+- vars:
+    context: file://./raw/ch01_introduction.md
+    question: "Nêu 6 khái niệm cốt lõi cần nắm khi bắt đầu học AI Agent theo mục 1.6."
+  assert:
+    - type: icontains
+      weight: 0.3
+      value: "Prompt Engineering"
+    - type: icontains
+      weight: 0.3
+      value: "Tool Calling"
+    - type: icontains
+      weight: 0.3
+      value: "Memory Management"
+    - type: llm-rubric
+      weight: 2
+      value: "Liệt kê đủ 6 khái niệm: Prompt Engineering, Tool Calling, Memory Management, Planning & Reasoning, Evaluation, Safety & Alignment."
+
+# ==========================================
+# BỔ SUNG CHƯƠNG 2 (mở rộng độ phủ)
+# ==========================================
+
+- vars:
+    context: file://./raw/ch02_foundations.md
+    question: "Kể tên 3 cách tạo Structured Output từ LLM được đề cập trong tài liệu."
+  assert:
+    - type: contains-any
+      weight: 0.3
+      value: ["JSON mode", "JSON"]
+    - type: contains-any
+      weight: 0.3
+      value: ["Function calling", "Tool use"]
+    - type: contains-any
+      weight: 0.3
+      value: ["Pydantic", "instructor"]
+    - type: llm-rubric
+      weight: 1.5
+      value: "Nêu đủ 3 cách: JSON mode (yêu cầu LLM trả JSON hợp lệ), Function calling/Tool use (định nghĩa schema trước), Pydantic parsing (dùng thư viện instructor)."
+
+- vars:
+    context: file://./raw/ch02_foundations.md
+    question: "Mô tả 5 bước trong vòng lặp tool-calling đầy đủ của một AI Agent."
+  assert:
+    - type: llm-rubric
+      weight: 2
+      value: "Mô tả đúng thứ tự: (1) Developer định nghĩa tool, (2) LLM đọc danh sách tool, (3) LLM sinh lời gọi tool khi cần, (4) Developer thực thi tool thực sự, (5) Kết quả trả lại cho LLM tiếp tục xử lý."
+
+- vars:
+    context: file://./raw/ch02_foundations.md
+    question: "Kể tên các công cụ Vector Database phổ biến cho long-term memory được liệt kê trong tài liệu."
+  assert:
+    - type: icontains
+      weight: 0.3
+      value: "Chroma"
+    - type: icontains
+      weight: 0.3
+      value: "Pinecone"
+    - type: icontains
+      weight: 0.3
+      value: "FAISS"
+    - type: llm-rubric
+      weight: 1.5
+      value: "Liệt kê đủ 5 công cụ: Chroma, Pinecone, Weaviate, Qdrant, FAISS, kèm đặc điểm ngắn gọn của mỗi công cụ nếu có trong tài liệu."
+
+# --- Bẫy chống ảo giác bổ sung (Chương 2) ---
+- vars:
+    context: file://./raw/ch02_foundations.md
+    question: "Nên chọn Pinecone hay Qdrant cho một startup 5 người với ngân sách dưới 100 USD/tháng?"
+  assert:
+    - type: llm-rubric
+      weight: 1
+      value: "Tài liệu chỉ mô tả đặc điểm chung của từng vector DB, không có thông tin về giá cụ thể hay khuyến nghị theo ngân sách/quy mô đội nhóm. Câu trả lời phải nêu rõ giới hạn này thay vì tự đưa ra khuyến nghị dựa trên thông tin không có trong tài liệu."
+
+# ==========================================
+# BỔ SUNG CHƯƠNG 3 (mở rộng độ phủ)
+# ==========================================
+
+- vars:
+    context: file://./raw/ch03_frameworks.md
+    question: "LCEL trong LangChain là gì và hoạt động theo cú pháp nào?"
+  assert:
+    - type: icontains
+      weight: 0.4
+      value: "LangChain Expression Language"
+    - type: icontains
+      weight: 0.4
+      value: "|"
+    - type: llm-rubric
+      weight: 1.5
+      value: "Giải thích LCEL (LangChain Expression Language) dùng ký hiệu | để nối các component (prompt, model, parser) thành một chain."
+
+- vars:
+    context: file://./raw/ch03_frameworks.md
+    question: "Đặc điểm nổi bật của AutoGen so với các framework agent khác là gì?"
+  assert:
+    - type: llm-rubric
+      weight: 1.5
+      value: "Nêu được AutoGen (Microsoft) cho phép các agent giao tiếp qua tin nhắn kiểu chat, hỗ trợ Human Proxy tham gia, và hỗ trợ code execution tích hợp sẵn."
+
+- vars:
+    context: file://./raw/ch03_frameworks.md
+    question: "Liệt kê các công cụ hỗ trợ Search & Browsing cho AI Agent được đề cập trong mục Tools & Integrations."
+  assert:
+    - type: icontains
+      weight: 0.4
+      value: "Tavily"
+    - type: icontains
+      weight: 0.4
+      value: "Brave Search"
+    - type: llm-rubric
+      weight: 1.5
+      value: "Liệt kê đủ: Tavily Search API, Brave Search API, Playwright/Selenium."
+
+# --- Câu hỏi mơ hồ bổ sung (Chương 3) ---
+- vars:
+    context: file://./raw/ch03_frameworks.md
+    question: "Framework này có ổn không?"
+  assert:
+    - type: llm-rubric
+      weight: 1
+      value: "Vì câu hỏi không nêu rõ 'framework này' là LangChain, LangGraph, CrewAI, AutoGen hay LlamaIndex, câu trả lời tốt nên hỏi lại để xác định framework cụ thể trước khi trả lời, thay vì tự chọn đại một framework."
+
+# ==========================================
+# BỔ SUNG CHƯƠNG 4 (mở rộng độ phủ)
+# ==========================================
+
+- vars:
+    context: file://./raw/ch04_advanced.md
+    question: "Liệt kê 4 chiến lược Chunking trong Advanced RAG và điểm khác biệt giữa chúng."
+  assert:
+    - type: icontains
+      weight: 0.3
+      value: "Fixed-size chunking"
+    - type: icontains
+      weight: 0.3
+      value: "Semantic chunking"
+    - type: icontains
+      weight: 0.3
+      value: "Hierarchical chunking"
+    - type: llm-rubric
+      weight: 2
+      value: "Liệt kê đủ 4 chiến lược: Fixed-size, Sentence splitting, Semantic chunking, Hierarchical chunking, mô tả đúng đặc điểm/nhược điểm mỗi loại."
+
+- vars:
+    context: file://./raw/ch04_advanced.md
+    question: "So sánh Dense retrieval, Sparse retrieval và Hybrid retrieval trong Advanced RAG."
+  assert:
+    - type: icontains
+      weight: 0.3
+      value: "Dense retrieval"
+    - type: icontains
+      weight: 0.3
+      value: "Sparse retrieval"
+    - type: icontains
+      weight: 0.3
+      value: "Hybrid"
+    - type: llm-rubric
+      weight: 2
+      value: "Giải thích Dense retrieval dùng vector similarity, Sparse retrieval dùng BM25/TF-IDF tốt cho từ khóa chính xác, Hybrid kết hợp cả hai và được đánh giá là tốt nhất."
+
+- vars:
+    context: file://./raw/ch04_advanced.md
+    question: "RAPTOR (Recursive Abstractive Processing) hoạt động như thế nào và phù hợp cho trường hợp nào?"
+  assert:
+    - type: llm-rubric
+      weight: 1.5
+      value: "Mô tả đúng quy trình RAPTOR: cluster các chunk tương tự, tóm tắt từng cluster, lưu cả chunk gốc lẫn tóm tắt; nêu được RAPTOR phù hợp cho câu hỏi cần hiểu tổng thể tài liệu."
+
+- vars:
+    context: file://./raw/ch04_advanced.md
+    question: "Liệt kê 4 chiến lược tối ưu chi phí (Cost Optimization) khi vận hành Agent trong production."
+  assert:
+    - type: llm-rubric
+      weight: 1.5
+      value: "Liệt kê đủ ít nhất 4 trong 5 chiến lược: dùng model nhỏ cho subtask đơn giản, cache kết quả tool call idempotent, tóm tắt conversation history, giới hạn max_iterations, dùng batching cho xử lý bulk."
+
+- vars:
+    context: file://./raw/ch04_advanced.md
+    question: "Model Context Protocol (MCP) và Agent-to-Agent Protocol (A2A) khác nhau như thế nào?"
+  assert:
+    - type: icontains
+      weight: 0.4
+      value: "MCP"
+    - type: icontains
+      weight: 0.4
+      value: "A2A"
+    - type: llm-rubric
+      weight: 1.5
+      value: "Phân biệt được MCP là chuẩn giao tiếp giữa LLM với data source/tools (do Anthropic đề xuất), còn A2A là chuẩn giao tiếp giữa các AI agent của các nhà cung cấp khác nhau."
+
+# --- Bẫy chống ảo giác bổ sung (Chương 4) ---
+- vars:
+    context: file://./raw/ch04_advanced.md
+    question: "So sánh chi phí fine-tuning LoRA giữa AWS SageMaker và Google Vertex AI được nêu trong tài liệu."
+  assert:
+    - type: llm-rubric
+      weight: 1
+      value: "Tài liệu chỉ liệt kê các phương pháp fine-tuning (Full fine-tuning, LoRA/QLoRA, PEFT, RLHF) mà không so sánh nền tảng cloud cụ thể nào. Câu trả lời phải nêu rõ tài liệu không có thông tin này, không tự bịa ra số liệu so sánh AWS/Vertex AI."
+
+# ==========================================
+# BỔ SUNG: CÂU HỎI TỔNG HỢP ĐA CHƯƠNG
+# ==========================================
+
+- vars:
+    context: file://./raw/ch02_foundations.md
+    question: "ReAct Pattern (Thought-Action-Observation) và Tree of Thoughts khác nhau ở điểm cốt lõi nào về cách agent suy luận?"
+  assert:
+    - type: llm-rubric
+      weight: 1.5
+      value: >
+        Vì context chỉ chứa Chương 2 (ReAct), câu trả lời chỉ nên mô tả chi tiết ReAct
+        (vòng lặp Thought-Action-Observation) dựa trên tài liệu, và nêu rõ tài liệu hiện
+        tại không có nội dung về Tree of Thoughts để so sánh — không được tự bịa thông
+        tin về Tree of Thoughts nếu nó không nằm trong context được cung cấp.
+
+- vars:
+    context: file://./raw/ch03_frameworks.md
+    question: "Trong lộ trình học framework 7 tuần được đề xuất, tuần nào nên học CrewAI và vì sao?"
+  assert:
+    - type: icontains
+      weight: 0.4
+      value: "Tuần 5"
+    - type: llm-rubric
+      weight: 1.5
+      value: "Nêu đúng CrewAI được học ở Tuần 5, sau khi đã nắm LangChain (tuần 1-2) và LangGraph (tuần 3-4), lý do vì CrewAI dùng cho multi-agent workflow cần nền tảng agent cơ bản trước."

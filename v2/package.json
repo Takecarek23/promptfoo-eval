@@ -1,0 +1,18 @@
+{
+  "name": "promptfoo-eval",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "promptfoo eval -c promptfooconfig.yaml",
+    "test:ci": "promptfoo eval -c promptfooconfig.yaml --no-cache --output results.json",
+    "view": "promptfoo view",
+    "generate:dataset": "python3 generate_testcases.py"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "promptfoo": "^0.120.19"
+  }
+}

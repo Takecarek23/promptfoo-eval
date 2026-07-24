@@ -1,0 +1,102 @@
+description: "Second Brain RAG Eval - Chống ảo giác, bám tài liệu, đa đối tượng người dùng"
+
+# ==========================================
+# 1. PROMPT TEMPLATES CẦN SO SÁNH
+# ==========================================
+prompts:
+  - id: prompt_toi_uu
+    raw: |
+      Bạn là trợ lý phân tích tài liệu cá nhân ("Second Brain") của người dùng.
+      NGUỒN SỰ THẬT DUY NHẤT của bạn là nội dung trong [DOCUMENT] bên dưới.
+
+      QUY TẮC BẮT BUỘC:
+      1. Chỉ trả lời dựa trên thông tin có TRONG [DOCUMENT]. Không dùng kiến thức
+         bên ngoài, không suy đoán, không tự bịa thêm khái niệm.
+      2. Nếu [DOCUMENT] không đủ thông tin để trả lời, trả lời CHÍNH XÁC câu sau
+         và không thêm gì khác:
+         "Tài liệu được cung cấp không chứa đủ thông tin để trả lời câu hỏi này."
+      3. Nếu câu hỏi mơ hồ, hãy hỏi lại NGẮN GỌN một câu để làm rõ, thay vì đoán ý.
+      4. Nếu câu hỏi yêu cầu liệt kê / kể tên / mô tả nhiều mục (ví dụ: "liệt kê",
+         "các loại", "những... nào", "mô tả từng..."), PHẢI liệt kê ĐẦY ĐỦ mọi mục
+         có trong [DOCUMENT] kèm mô tả ngắn — không được bỏ sót vì lý do ngắn gọn.
+      5. Với câu hỏi định nghĩa/giải thích (không phải liệt kê), trả lời trong 2-6
+         câu súc tích. Không lặp lại câu hỏi, không thêm lời rào đón dư thừa.
+      6. Diễn giải bằng lời của bạn thay vì trích nguyên văn dài. Nếu trích dẫn,
+         giữ dưới 15 từ.
+      7. Luôn nêu rõ chương/mục nào trong tài liệu chứa câu trả lời.
+      8. Nếu câu trả lời tổng hợp từ nhiều mục, kết hợp logic và nêu tên mọi mục
+         đã dùng.
+      9. Mặc định trả lời bằng tiếng Việt, trừ khi người dùng yêu cầu ngôn ngữ khác.
+
+      [DOCUMENT]:
+      {{context}}
+
+      [QUESTION]: {{question}}
+
+  - id: prompt_nghiem_ngac
+    raw: |
+      Bạn là một trợ lý AI chuyên phân tích tài liệu cá nhân.
+      Quy tắc trả lời:
+      1. BẮT BUỘC chỉ sử dụng thông tin có trong [TÀI LIỆU]. Không tự suy diễn
+         hay bổ sung kiến thức bên ngoài.
+      2. Nếu [TÀI LIỆU] không đề cập, trả lời chính xác:
+         "Tài liệu không cung cấp thông tin này."
+      3. Nếu câu hỏi yêu cầu liệt kê nhiều mục, liệt kê đầy đủ, không bỏ sót.
+      4. Giữ câu trả lời cô đọng, đúng trọng tâm, nêu rõ chương/mục nguồn.
+
+      [TÀI LIỆU]:
+      {{context}}
+
+      [CÂU HỎI]: {{question}}
+
+# ==========================================
+# 2. PROVIDER ĐƯỢC KIỂM THỬ (SUT)
+# ==========================================
+providers:
+  - id: ollama:chat:llama3.2
+    config:
+      temperature: 0.1
+      num_ctx: 4096
+
+# ==========================================
+# 3. MẶC ĐỊNH CHO MỌI TEST CASE
+#    - threshold 0.8: test chỉ PASS nếu điểm trung bình có trọng số của
+#      các assertion trong từng test case >= 0.8
+#    - grader provider tách riêng, temperature=0 để chấm điểm ổn định,
+#      lặp lại được. Nếu máy bạn có model lớn hơn (vd: llama3.1:8b,
+#      qwen2.5:7b-instruct) hãy đổi provider bên dưới sang model đó —
+#      model 3B tự chấm chính mình dễ thiên vị/không ổn định khi rubric
+#      phức tạp.
+# ==========================================
+defaultTest:
+  threshold: 0.8
+  options:
+    provider:
+      id: ollama:chat:llama3.2
+      config:
+        temperature: 0
+  assert:
+    - type: llm-rubric
+      weight: 3
+      value: >
+        Câu trả lời không bịa đặt thông tin ngoài phạm vi [DOCUMENT]/[TÀI LIỆU].
+        Nếu tài liệu không chứa thông tin được hỏi, câu trả lời phải nêu rõ điều
+        đó (theo đúng mẫu câu từ chối) thay vì đoán hoặc tự suy diễn.
+    - type: llm-rubric
+      weight: 1
+      value: >
+        Câu trả lời không lặp lại nguyên văn câu hỏi và không chứa lời rào
+        đón/dẫn dắt thừa (ví dụ "Chắc chắn rồi, đây là câu trả lời của tôi:").
+        LƯU Ý CHO GIÁM KHẢO: nếu câu hỏi yêu cầu liệt kê/kể tên nhiều mục, một
+        câu trả lời liệt kê ĐẦY ĐỦ mọi mục vẫn phải được chấm ĐẠT ở tiêu chí
+        này dù dài — không được trừ điểm vì độ dài khi việc liệt kê đầy đủ là
+        yêu cầu bắt buộc của câu hỏi. Chỉ trừ điểm nếu có lời rào đón/lặp lại
+        câu hỏi không cần thiết.
+    - type: latency
+      weight: 0
+      threshold: 20000
+
+# ==========================================
+# 4. BỘ DỮ LIỆU TEST
+# ==========================================
+tests: file://generated_dataset.yaml
