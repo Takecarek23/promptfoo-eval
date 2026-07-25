@@ -40,5 +40,9 @@ providers:
     config:
       temperature: 0.1
 
+defaultTest:
+  options:
+    provider: ollama:chat:llama3.2
+
 # 3. Bộ dữ liệu thử nghiệm từ 2 file Markdown
 tests: file://generated_dataset.yaml

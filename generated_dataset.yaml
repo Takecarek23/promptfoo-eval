@@ -1,243 +1,201 @@
-# ==========================================
-# CHƯƠNG 1: TỔNG QUAN VỀ AI AGENT
-# ==========================================
+# =============================================================
+# Bộ testcase promptfoo — đánh giá prompt trên 4 chương tài liệu
+# AI Agent (ch01 → ch04)
+#
+# Nguyên tắc chọn assertion type:
+#   - Câu hỏi có đáp án CHỐT, liệt kê cố định, thuật ngữ cụ thể
+#     → dùng contains-all / icontains-all / regex (rẻ, tất định,
+#       không phụ thuộc model chấm điểm phụ)
+#   - Câu hỏi yêu cầu code/syntax cụ thể → contains / regex
+#   - Câu hỏi mở, cần SO SÁNH, GIẢI THÍCH, LẬP LUẬN → llm-rubric
+#     (chỉ dùng khi không thể chấm bằng rule cứng)
+#
+# Cách dùng: dán khối "tests:" này vào promptfoo config đang có,
+# hoặc trỏ testCases tới file này. Giữ nguyên context: file://
+# theo đúng convention trong ví dụ gốc của bạn.
+# =============================================================
+  # ─────────────────────────── CHƯƠNG 1 ───────────────────────────
 
-- vars:
-    context: file://./raw/ch01_introduction.md
-    question: "Định nghĩa chính thức của AI Agent theo tài liệu là gì và điểm khác biệt cốt lõi giữa AI Agent với chatbot thông thường?"
-  assert:
-    - type: icontains
-      value: "Perception"
-    - type: icontains
-      value: "Reasoning"
-    - type: icontains
-      value: "Action"
-    - type: llm-rubric
-      value: "Nêu đúng công thức Agent = Perception + Reasoning + Action. Giải thích được chatbot chỉ phản xạ đơn thuần (input->output), còn Agent nhận mục tiêu, lập kế hoạch, thực thi nhiều bước và đánh giá."
-      provider: ollama:chat:llama3.2
+  - vars:
+      context: file://./raw/ch01_introduction.md
+      question: "AI Agent được định nghĩa gồm các thành phần nào?"
+    assert:
+      - type: icontains-all
+        value: ["Perception", "Reasoning", "Action"]
 
-- vars:
-    context: file://./raw/ch01_introduction.md
-    question: "Kể tên các mức độ tự chủ của AI Agent từ thấp đến cao được trình bày trong tài liệu."
-  assert:
-    - type: icontains
-      value: "Rule-based Agent"
-    - type: icontains
-      value: "Reactive Agent"
-    - type: icontains
-      value: "Deliberative Agent"
-    - type: icontains
-      value: "Learning Agent"
-    - type: icontains
-      value: "Autonomous LLM Agent"
-      provider: ollama:chat:llama3.2
+  - vars:
+      context: file://./raw/ch01_introduction.md
+      question: "Liệt kê đủ 5 mức độ tự chủ của AI Agent (từ Mức 1 đến Mức 5) theo đúng thứ tự trong tài liệu."
+    assert:
+      - type: icontains-all
+        value:
+          - "Rule-based"
+          - "Reactive"
+          - "Deliberative"
+          - "Learning"
+          - "Autonomous"
 
-- vars:
-    context: file://./raw/ch01_introduction.md
-    question: "Nêu 5 yếu tố thúc đẩy sự bùng nổ của AI Agent trong giai đoạn 2023–2026."
-  assert:
-    - type: icontains
-      value: "LLM mạnh hơn"
-    - type: icontains
-      value: "Tool use"
-    - type: icontains
-      value: "Long context"
-    - type: icontains
-      value: "Frameworks trưởng thành"
-    - type: icontains
-      value: "Nhu cầu thực tế"
+  - vars:
+      context: file://./raw/ch01_introduction.md
+      question: "Sự khác biệt cốt lõi giữa chatbot thông thường và AI Agent là gì?"
+    assert:
+      - type: llm-rubric
+        value: "Nêu được chatbot chỉ phản xạ đơn thuần (nhận input → sinh output), trong khi AI Agent nhận mục tiêu, tự lập kế hoạch, thực thi nhiều bước và có đánh giá kết quả (tính tự chủ, đa bước, có trạng thái)."
+        provider: ollama:chat:llama3.2
 
-- vars:
-    context: file://./raw/ch01_introduction.md
-    question: "Vẽ sơ đồ hoặc mô tả cấu trúc của 4 khối thành phần cốt lõi nằm trong sơ đồ Kiến trúc tổng quát của một LLM-based Agent."
-  assert:
-    - type: icontains
-      value: "LLM Core"
-    - type: icontains
-      value: "Memory"
-    - type: icontains
-      value: "Tools"
-    - type: icontains
-      value: "Planning Module"
-      provider: ollama:chat:llama3.2
+  - vars:
+      context: file://./raw/ch01_introduction.md
+      question: "Kể tên ít nhất 3 trong số các yếu tố thúc đẩy AI Agent bùng nổ giai đoạn 2023–2026."
+    assert:
+      - type: icontains-any
+        value:
+          - "LLM mạnh hơn"
+          - "Tool use"
+          - "Long context"
+          - "Frameworks trưởng thành"
+          - "Nhu cầu thực tế"
+      - type: javascript
+        value: |
+          // đếm số yếu tố khớp trong 5 yếu tố hợp lệ, yêu cầu tối thiểu 3
+          const keywords = ["LLM", "Tool use", "context", "Frameworks", "workflow", "RPA"];
+          const hits = keywords.filter(k => output.toLowerCase().includes(k.toLowerCase())).length;
+          return hits >= 3;
 
-- vars:
-    context: file://./raw/ch01_introduction.md
-    question: "Phân biệt 3 loại kiến trúc AI Agent theo phân loại kiến trúc trong Chương 1."
-  assert:
-    - type: llm-rubric
-      value: "Phân biệt đúng 3 loại: Single Agent (một agent xử lý toàn bộ), Multi-Agent (nhiều agent phối hợp chuyên hóa), Hierarchical (cấp cao điều phối cấp thấp)."
-      provider: ollama:chat:llama3.2
+  - vars:
+      context: file://./raw/ch01_introduction.md
+      question: "Khi học về AI Agent tôi cần nắm các thuật ngữ nào?"
+    assert:
+      - type: icontains-all
+        value: ["Prompt Engineering", "Tool Calling", "Memory Management", "Reasoning", "Evaluation", "Safety & Alignment"]
 
-# ==========================================
-# CHƯƠNG 2: NỀN TẢNG KỸ THUẬT
-# ==========================================
 
-- vars:
-    context: file://./raw/ch02_foundations.md
-    question: "Mức nhiệt độ (temperature) nào phù hợp cho AI Agent cần đưa ra quyết định chính xác và tại sao?"
-  assert:
-    - type: llm-rubric
-      value: "Nêu được giá trị temperature thấp (0 - 0.2) giúp mô hình hoạt động tất định, tái lập được và phù hợp với agent cần logic chính xác."
-      provider: ollama:chat:llama3.2
+  # ─────────────────────────── CHƯƠNG 2 ───────────────────────────
 
-- vars:
-    context: file://./raw/ch02_foundations.md
-    question: "Mô hình ReAct Pattern (Reason + Act) hoạt động như thế nào qua các bước chính?"
-  assert:
-    - type: llm-rubric
-      value: "Mô tả vòng lặp luân phiên giữa suy luận (Thought), thực thi hành động/công cụ (Action) và quan sát kết quả thu được (Observation)."
-      provider: ollama:chat:llama3.2
+  - vars:
+      context: file://./raw/ch02_foundations.md
+      question: "Mức nhiệt độ (temperature) nào phù hợp cho AI Agent cần đưa ra quyết định chính xác và tại sao?"
+    assert:
+      - type: llm-rubric
+        value: "Nêu được giá trị temperature thấp (0 - 0.2) giúp mô hình hoạt động tất định, tái lập được và phù hợp với agent cần logic chính xác."
+        provider: ollama:chat:llama3.2
 
-- vars:
-    context: file://./raw/ch02_foundations.md
-    question: "Liệt kê và phân biệt 4 loại bộ nhớ (Memory) trong AI Agent."
-  assert:
-    - type: icontains
-      value: "In-context memory"
-    - type: icontains
-      value: "External memory"
-    - type: icontains
-      value: "Episodic memory"
-    - type: icontains
-      value: "Semantic memory"
-    - type: llm-rubric
-      value: "Giải thích rõ định nghĩa, đặc điểm ngắn gọn của cả 4 loại bộ nhớ này."
-      provider: ollama:chat:llama3.2
+  - vars:
+      context: file://./raw/ch02_foundations.md
+      question: "Liệt kê đủ 4 loại memory trong AI Agent được đề cập trong tài liệu."
+    assert:
+      - type: icontains-all
+        value: ["In-context", "External", "Episodic", "Semantic"]
 
-- vars:
-    context: file://./raw/ch02_foundations.md
-    question: "Quy trình RAG cơ bản bao gồm 5 bước nào để đưa dữ liệu vào Vector Database và truy xuất?"
-  assert:
-    - type: llm-rubric
-      value: "Nêu đúng 5 bước: Chunk văn bản -> Embed thành vector -> Lưu vào vector DB -> Embed query khi cần -> Đưa chunk gần nhất vào context cho LLM."
-      provider: ollama:chat:llama3.2
+  - vars:
+      context: file://./raw/ch02_foundations.md
+      question: "Viết vòng lặp tool-calling cơ bản bằng pseudocode Python dựa trên tài liệu (phải kiểm tra stop_reason)."
+    assert:
+      - type: contains-all
+        value: ["while", "stop_reason", "tool_use"]
 
-- vars:
-    context: file://./raw/ch02_foundations.md
-    question: "Liệt kê các metric cơ bản dùng để đánh giá hiệu năng và chất lượng của AI Agent."
-  assert:
-    - type: icontains
-      value: "Task completion rate"
-    - type: icontains
-      value: "Step efficiency"
-    - type: icontains
-      value: "Tool usage accuracy"
-    - type: icontains
-      value: "Hallucination rate"
-      provider: ollama:chat:llama3.2
+  - vars:
+      context: file://./raw/ch02_foundations.md
+      question: "Theo tài liệu, 1 token tiếng Anh xấp xỉ bao nhiêu từ?"
+    assert:
+      - type: regex
+        value: "0\\.75"
 
-# ==========================================
-# CHƯƠNG 3: FRAMEWORKS & TOOLS
-# ==========================================
+  - vars:
+      context: file://./raw/ch02_foundations.md
+      question: "Kể tên ít nhất 3 metric cơ bản dùng để đánh giá (evaluate) một AI Agent."
+    assert:
+      - type: icontains-any
+        value:
+          - "Task completion rate"
+          - "Step efficiency"
+          - "Tool usage accuracy"
+          - "Hallucination rate"
+          - "Latency"
+          - "Cost per task"
+      - type: javascript
+        value: |
+          const keywords = ["completion", "efficiency", "accuracy", "hallucination", "latency", "cost"];
+          const hits = keywords.filter(k => output.toLowerCase().includes(k)).length;
+          return hits >= 3;
 
-- vars:
-    context: file://./raw/ch03_frameworks.md
-    question: "LangGraph là gì, triết lý biểu diễn Agent của nó như thế nào và các khái niệm cốt lõi của nó bao gồm những gì?"
-  assert:
-    - type: icontains
-      value: "State"
-    - type: icontains
-      value: "Node"
-    - type: icontains
-      value: "Edge"
-    - type: icontains
-      value: "Graph"
-    - type: llm-rubric
-      value: "Nêu được triết lý Agent = Graph (đỉnh = action, cạnh = điều kiện) và giải thích 4 thành phần: State, Node, Edge, Graph."
-      provider: ollama:chat:llama3.2
+  # ─────────────────────────── CHƯƠNG 3 ───────────────────────────
 
-- vars:
-    context: file://./raw/ch03_frameworks.md
-    question: "So sánh điểm mạnh và case sử dụng tiêu biểu của CrewAI và LlamaIndex."
-  assert:
-    - type: llm-rubric
-      value: " CrewAI: Thế mạnh về Multi-agent dễ dùng, workflow nhiều vai trò. LlamaIndex: Thế mạnh về RAG chuyên sâu, Q&A trên dữ liệu lớn."
-      provider: ollama:chat:llama3.2
+  - vars:
+      context: file://./raw/ch03_frameworks.md
+      question: "LangChain phù hợp và không phù hợp trong những trường hợp nào?"
+    assert:
+      - type: llm-rubric
+        value: "Nêu được LangChain phù hợp cho prototype nhanh, tích hợp nhiều LLM, hệ sinh thái connector phong phú; nhưng không phù hợp cho agent logic phức tạp (nên dùng LangGraph thay thế)."
+        provider: ollama:chat:llama3.2
 
-- vars:
-    context: file://./raw/ch03_frameworks.md
-    question: "Khi nào nên dùng LangChain và khi nào nên chuyển sang LangGraph?"
-  assert:
-    - type: llm-rubric
-      value: "Dùng LangChain khi cần prototype nhanh, tích hợp nhiều LLM/connector. Chuyển sang LangGraph khi cần logic agent có trạng thái phức tạp hoặc đồ thị có điều kiện."
-      provider: ollama:chat:llama3.2
+  - vars:
+      context: file://./raw/ch03_frameworks.md
+      question: "Trong LangGraph, 3 khái niệm cốt lõi State, Node, Edge có vai trò gì?"
+    assert:
+      - type: icontains-all
+        value: ["State", "Node", "Edge"]
 
-- vars:
-    context: file://./raw/ch03_frameworks.md
-    question: "Liệt kê 3 tính năng nâng cao nổi bật của LangGraph giúp kiểm soát luồng thực thi Agent."
-  assert:
-    - type: icontains
-      value: "Human-in-the-loop"
-    - type: icontains
-      value: "Checkpointing"
-    - type: icontains
-      value: "Streaming"
-      provider: ollama:chat:llama3.2
+  - vars:
+      context: file://./raw/ch03_frameworks.md
+      question: "CrewAI hỗ trợ những loại Process (quy trình làm việc) nào? Kể tên đủ 2 loại."
+    assert:
+      - type: icontains-all
+        value: ["sequential", "hierarchical"]
 
-- vars:
-    context: file://./raw/ch03_frameworks.md
-    question: "Hệ sinh thái frameworks AI Agent được chia làm 4 tầng nào? Liệt kê tên 4 tầng đó."
-  assert:
-    - type: icontains
-      value: "LLM Providers"
-    - type: icontains
-      value: "Orchestration Frameworks"
-    - type: icontains
-      value: "Agent Frameworks"
-    - type: icontains
-      value: "Infrastructure"
-      provider: ollama:chat:llama3.2
+  - vars:
+      context: file://./raw/ch03_frameworks.md
+      question: "Viết lệnh cài đặt LangChain kèm tích hợp Anthropic bằng pip."
+    assert:
+      - type: contains
+        value: "pip install langchain langchain-anthropic"
 
-# ==========================================
-# CHƯƠNG 4: KỸ THUẬT NÂNG CAO
-# ==========================================
+  - vars:
+      context: file://./raw/ch03_frameworks.md
+      question: "Framework nào trong bảng so sánh phù hợp nhất cho RAG chuyên sâu trên tài liệu lớn?"
+    assert:
+      - type: icontains
+        value: "LlamaIndex"
 
-- vars:
-    context: file://./raw/ch04_advanced.md
-    question: "Tree of Thoughts (ToT) là gì và cơ chế hoạt động của nó khác gì so với suy luận tuyến tính thông thường?"
-  assert:
-    - type: icontains
-      value: "song song"
-    - type: llm-rubric
-      value: >
-        Nêu được ToT cho phép khám phá nhiều hướng suy luận song song thay vì tuyến tính.
-        Có đề cập các bước: sinh thought, đánh giá độ hứa hẹn và mở rộng thought tốt.
-      provider: ollama:chat:llama3.2
+  # ─────────────────────────── CHƯƠNG 4 ───────────────────────────
 
-- vars:
-    context: file://./raw/ch04_advanced.md
-    question: "Mô tả 4 mô hình phối hợp phổ biến trong hệ thống Multi-Agent (Multi-Agent Coordination)."
-  assert:
-    - type: icontains
-      value: "Orchestrator – Worker"
-    - type: icontains
-      value: "Peer-to-Peer"
-    - type: icontains
-      value: "Pipeline"
-    - type: icontains
-      value: "Blackboard"
-      provider: ollama:chat:llama3.2
-- vars:
-    context: file://./raw/ch04_advanced.md
-    question: "Nêu định nghĩa Tấn công Prompt Injection trong AI Agent và 4 giải pháp phòng thủ."
-  assert:
-    - type: llm-rubric
-      value: "Nêu được đây là nguy cơ từ dữ liệu bên ngoài chứa lệnh độc hại nhằm ghi đè chỉ dẫn. Nêu đúng các giải pháp: Phân tách system/user context, Validate/sanitize input, Dùng sandboxed LLM, Constitutional AI."
-      provider: ollama:chat:llama3.2
+  - vars:
+      context: file://./raw/ch04_advanced.md
+      question: "Tree of Thoughts (ToT) khác Chain-of-Thought (CoT) thông thường ở điểm nào?"
+    assert:
+      - type: llm-rubric
+        value: "Nêu được ToT khám phá nhiều hướng suy luận (thought) song song, đánh giá độ hứa hẹn của từng thought rồi mở rộng/loại bỏ, trong khi CoT đi theo một luồng suy luận tuyến tính duy nhất."
+        provider: ollama:chat:llama3.2
 
-- vars:
-    context: file://./raw/ch04_advanced.md
-    question: "Kỹ thuật Reranking trong Advanced RAG là gì và kể tên một số API/công cụ hỗ trợ?"
-  assert:
-    - type: llm-rubric
-      value: "Giải thích được Reranking là việc dùng cross-encoder sắp xếp lại top-k chunks vừa retrieve theo độ phù hợp thực sự. Kể tên được các công cụ như Cohere Rerank, BGE Reranker, hoặc FlashRank."
-      provider: ollama:chat:llama3.2
+  - vars:
+      context: file://./raw/ch04_advanced.md
+      question: "Liệt kê đủ 4 mô hình phối hợp trong Multi-Agent Coordination."
+    assert:
+      - type: icontains-all
+        value: ["Orchestrator", "Peer-to-Peer", "Pipeline", "Blackboard"]
 
-- vars:
-    context: file://./raw/ch04_advanced.md
-    question: "Khi nào nên Fine-tune mô hình thay vì chỉ làm Prompt Engineering?"
-  assert:
-    - type: llm-rubric
-      value: "Nêu đúng các trường hợp: Cần định dạng output rất đặc thù, Kiến thức domain quá chuyên biệt, Chi phí inference quá cao (fine-tune model nhỏ hơn)."
-      provider: ollama:chat:llama3.2
+  - vars:
+      context: file://./raw/ch04_advanced.md
+      question: "Kể tên các phương pháp retrieval trong Advanced RAG (ít nhất 3)."
+    assert:
+      - type: icontains-any
+        value: ["Dense retrieval", "Sparse retrieval", "Hybrid retrieval", "Multi-query", "HyDE"]
+      - type: javascript
+        value: |
+          const keywords = ["dense", "sparse", "hybrid", "multi-query", "hyde"];
+          const hits = keywords.filter(k => output.toLowerCase().includes(k)).length;
+          return hits >= 3;
+
+  - vars:
+      context: file://./raw/ch04_advanced.md
+      question: "Nêu ít nhất 2 biện pháp phòng thủ trước tấn công Prompt Injection."
+    assert:
+      - type: llm-rubric
+        value: "Nêu được ít nhất 2 trong số: phân tách rõ system context vs user-provided data, validate/sanitize input từ nguồn ngoài, dùng sandboxed LLM call cho untrusted data, implement constitutional AI checks."
+        provider: ollama:chat:llama3.2
+
+  - vars:
+      context: file://./raw/ch04_advanced.md
+      question: "MCP (nhắc đến ở phần Emerging Patterns) là viết tắt của cụm từ tiếng Anh nào?"
+    assert:
+      - type: contains
+        value: "Model Context Protocol"
