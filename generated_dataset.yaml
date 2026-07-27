@@ -41,7 +41,7 @@
     assert:
       - type: llm-rubric
         value: "Nêu được chatbot chỉ phản xạ đơn thuần (nhận input → sinh output), trong khi AI Agent nhận mục tiêu, tự lập kế hoạch, thực thi nhiều bước và có đánh giá kết quả (tính tự chủ, đa bước, có trạng thái)."
-        provider: ollama:chat:llama3.2
+        
 
   - vars:
       context: file://./raw/ch01_introduction.md
@@ -77,7 +77,7 @@
     assert:
       - type: llm-rubric
         value: "Nêu được giá trị temperature thấp (0 - 0.2) giúp mô hình hoạt động tất định, tái lập được và phù hợp với agent cần logic chính xác."
-        provider: ollama:chat:llama3.2
+        
 
   - vars:
       context: file://./raw/ch02_foundations.md
@@ -126,7 +126,7 @@
     assert:
       - type: llm-rubric
         value: "Nêu được LangChain phù hợp cho prototype nhanh, tích hợp nhiều LLM, hệ sinh thái connector phong phú; nhưng không phù hợp cho agent logic phức tạp (nên dùng LangGraph thay thế)."
-        provider: ollama:chat:llama3.2
+        
 
   - vars:
       context: file://./raw/ch03_frameworks.md
@@ -164,7 +164,7 @@
     assert:
       - type: llm-rubric
         value: "Nêu được ToT khám phá nhiều hướng suy luận (thought) song song, đánh giá độ hứa hẹn của từng thought rồi mở rộng/loại bỏ, trong khi CoT đi theo một luồng suy luận tuyến tính duy nhất."
-        provider: ollama:chat:llama3.2
+        
 
   - vars:
       context: file://./raw/ch04_advanced.md
@@ -191,7 +191,7 @@
     assert:
       - type: llm-rubric
         value: "Nêu được ít nhất 2 trong số: phân tách rõ system context vs user-provided data, validate/sanitize input từ nguồn ngoài, dùng sandboxed LLM call cho untrusted data, implement constitutional AI checks."
-        provider: ollama:chat:llama3.2
+        
 
   - vars:
       context: file://./raw/ch04_advanced.md

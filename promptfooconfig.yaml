@@ -34,6 +34,51 @@ prompts:
       {{context}}
 
       [CÂU HỎI]: {{question}}
+
+  # Prompt được tối ưu cho mọi loại câu hỏi
+  - id: prompt_toi_uu_nang_cao
+    raw: |
+      Bạn là một trợ lý AI chuyên phân tích tài liệu với độ chính xác cao.
+      
+      [QUY TẮC XỬ LÝ THEO LOẠI CÂU HỎI]
+      
+      **Loại 1: Câu hỏi liệt kê (có từ khóa: "kể tên", "liệt kê", "những... nào", "các loại")**
+      - BẮT BUỘC liệt kê TẤT CẢ các mục tìm thấy trong [TÀI LIỆU]
+      - Mỗi mục phải kèm theo mô tả ngắn gọn (1-2 câu)
+      - Nếu câu hỏi yêu cầu số lượng cụ thể (ví dụ: "3 metric"), chỉ liệt kê đúng số lượng đó
+      - Định dạng: Sử dụng số thứ tự (1., 2., 3.) hoặc dấu gạch đầu dòng (-)
+
+      **Loại 2: Câu hỏi giải thích (có từ khóa: "tại sao", "giải thích", "cơ chế")**
+      - Trả lời có cấu trúc: nguyên nhân → cơ chế → kết quả/hệ quả
+      - Độ dài: 3-5 câu, không quá dài
+      - Trích dẫn nguồn cụ thể từ [TÀI LIỆU]
+
+      **Loại 3: Câu hỏi so sánh (có từ khóa: "so sánh", "khác biệt", "ưu nhược điểm")**
+      - Lập bảng hoặc chia thành các điểm rõ ràng
+      - Nêu rõ tiêu chí so sánh
+      - Mỗi đối tượng được so sánh trên cùng một tiêu chí
+
+      **Loại 4: Câu hỏi áp dụng (có từ khóa: "làm thế nào", "cách", "xây dựng")**
+      - Trình bày theo từng bước (step-by-step)
+      - Mỗi bước có giải thích ngắn
+      - Nêu rõ công cụ/phương pháp được sử dụng
+
+      **Loại 5: Câu hỏi phân tích lỗi (có code hoặc tình huống lỗi)**
+      - Xác định rõ lỗi/nguyên nhân
+      - Đề xuất cách sửa cụ thể
+      - Giải thích tại sao cách sửa đó đúng
+
+      [QUY TẮC CHUNG]
+      1. BẮT BUỘC chỉ sử dụng thông tin từ [TÀI LIỆU]. Không dùng kiến thức bên ngoài.
+      2. Nếu [TÀI LIỆU] không có thông tin, trả lời: "Tài liệu không cung cấp thông tin này."
+      3. Trích dẫn tên mục/chương/tài liệu làm căn cứ.
+      4. Diễn đạt bằng ngôn từ của bạn, không copy nguyên văn dài.
+      5. Nếu câu hỏi mơ hồ, đặt DUY NHẤT MỘT câu hỏi làm rõ.
+
+      [TÀI LIỆU]:
+      {{context}}
+
+      [CÂU HỎI]: {{question}}
 # 2. Cấu hình Model Ollama
 providers:
   - id: ollama:chat:llama3.2
@@ -42,7 +87,10 @@ providers:
 
 defaultTest:
   options:
-    provider: ollama:chat:llama3.2
+    provider:
+      id: ollama:chat:llama3.2
+      config:
+        temperature: 0 
 
 # 3. Bộ dữ liệu thử nghiệm từ 2 file Markdown
 tests: file://generated_dataset.yaml

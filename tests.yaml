@@ -1,26 +1,154 @@
-# Test Case 1: Đọc tệp ch01_introduction.md
-  - vars:
-      context: file://../Claude_Skill/raw_done/ch01_introduction.md
-      question: "Tóm tắt các điểm chính và khái niệm cốt lõi được giới thiệu trong Chương 1 này?"
-    assert:
-      - type: llm-rubric
-        value: "Câu trả lời tóm tắt chính xác các ý chính có trong ch01_introduction.md, không tự bịa ra các khái niệm ngoài bài viết."
-        provider: ollama:chat:llama3.2
+# Bộ testcase promptfoo cho tài liệu: Nghị định 168/2024/NĐ-CP
+# (Quy định xử phạt vi phạm hành chính về trật tự, an toàn giao thông đường bộ;
+#  trừ điểm, phục hồi điểm giấy phép lái xe)
+#
+# Phân loại theo 5 dạng câu hỏi thường gặp khi test RAG/QA trên văn bản pháp luật:
+#   A. Tra cứu số liệu định lượng (mức phạt tiền, mức trừ điểm, thời hạn)
+#   B. Câu hỏi liệt kê (nhiều mục trong 1 điều/khoản)
+#   C. Câu hỏi định nghĩa / phạm vi áp dụng
+#   D. Câu hỏi về hiệu lực thi hành / điều khoản chuyển tiếp
+#   E. Câu hỏi "bẫy" - thông tin KHÔNG có trong tài liệu (kiểm tra chống hallucination)
 
-  # Test Case 2: Đọc tệp ch02_foundations.md
-  - vars:
-      context: file://../Claude_Skill/raw_done/ch02_foundations.md
-      question: "Chương 2 đề cập đến những nền tảng (foundations) kỹ thuật nào?"
-    assert:
-      - type: llm-rubric
-        value: "Liệt kê đúng các nền tảng kỹ thuật xuất hiện trong ch02_foundations.md."
-        provider: ollama:chat:llama3.2
+# ============================================================
+# A. TRA CỨU SỐ LIỆU ĐỊNH LƯỢNG
+# Đặc điểm: đáp án là con số/khoảng tiền cụ thể, nằm rải rác nhưng cố định trong văn bản.
+# -> Dùng icontains-any (chấp nhận nhiều cách viết số: "30.000.000", "30 triệu")
+#    hoặc regex khi cần khớp đúng định dạng tiền tệ.
+# ============================================================
 
-  # Test Case 3: Kiểm tra khả năng chống ảo giác (Bẫy câu hỏi không có trong file Ch01)
-  - vars:
-      context: file://../Claude_Skill/raw_done/ch01_introduction.md
-      question: "Mô hình này hướng dẫn cách cài đặt Docker trên Windows như thế nào?"
-    assert:
-      - type: llm-rubric
-        value: "Câu trả lời phải thể hiện rằng tài liệu không đề cập đến việc cài đặt Docker (hoặc trả lời Tài liệu không cung cấp thông tin này)."
-        provider: ollama:chat:llama3.2
+- vars:
+    context: file://./raw/output.md
+    question: "Nghị định quy định mức phạt tiền bao nhiêu đối với người điều khiển xe ô tô có nồng độ cồn vượt quá 80 miligam/100 mililít máu?"
+  assert:
+    - type: icontains-any
+      value: ["30.000.000", "30 triệu", "40.000.000", "40 triệu", "30-40 triệu"]
+
+- vars:
+    context: file://./raw/output.md
+    question: "Hành vi điều khiển ô tô lạng lách, đánh võng trên đường bộ bị phạt tiền trong khoảng nào?"
+  assert:
+    - type: icontains-any
+      value: ["40.000.000", "40 triệu", "50.000.000", "50 triệu"]
+
+- vars:
+    context: file://./raw/output.md
+    question: "Thời hiệu xử phạt vi phạm hành chính về trật tự, an toàn giao thông đường bộ theo Nghị định là bao lâu?"
+  assert:
+    - type: icontains-any
+      value: ["01 năm", "1 năm", "một năm"]
+
+- vars:
+    context: file://./raw/output.md
+    question: "Người điều khiển ô tô vi phạm nồng độ cồn ở mức cao nhất (khoản 10, điểm đ khoản 11 Điều 6) bị trừ bao nhiêu điểm giấy phép lái xe?"
+  assert:
+    - type: icontains-any
+      value: ["10 điểm", "10 diem", "mười điểm"]
+
+- vars:
+    context: file://./raw/output.md
+    question: "Mức phạt tiền cho hành vi không chấp hành yêu cầu kiểm tra nồng độ cồn của người thi hành công vụ (đối với ô tô) là bao nhiêu?"
+  assert:
+    - type: regex
+      value: "30\\.?000\\.?000|40\\.?000\\.?000|30 ?triệu|40 ?triệu"
+
+# ============================================================
+# B. CÂU HỎI LIỆT KÊ
+# Đặc điểm: câu trả lời đúng gồm nhiều thành phần (điểm a, b, c... trong 1 khoản).
+# -> Dùng llm-rubric để chấm điểm từng phần, tránh false-negative do văn phong khác nhau.
+# ============================================================
+
+- vars:
+    context: file://./raw/output.md
+    question: "Theo Điều 3, có bao nhiêu hình thức xử phạt chính và đó là những hình thức nào?"
+  assert:
+    - type: llm-rubric
+      value: "Câu trả lời nêu đủ 3 hình thức xử phạt chính: (1) Cảnh cáo, (2) Phạt tiền, (3) Tịch thu phương tiện được sử dụng để vi phạm hành chính. Mỗi hình thức đúng được 1/3 điểm."
+      provider: ollama:chat:llama3.2
+
+- vars:
+    context: file://./raw/output.md
+    question: "Nêu các hình thức xử phạt bổ sung được quy định tại khoản 2 Điều 3."
+  assert:
+    - type: llm-rubric
+      value: "Câu trả lời nêu đủ các hình thức xử phạt bổ sung: tước quyền sử dụng giấy phép/chứng chỉ hành nghề có thời hạn; đình chỉ hoạt động có thời hạn; tịch thu tang vật/phương tiện vi phạm (trong trường hợp không áp dụng là hình thức xử phạt chính). Chấm theo tỷ lệ số mục nêu đúng."
+      provider: ollama:chat:llama3.2
+
+- vars:
+    context: file://./raw/output.md
+    question: "Tổ chức quy định tại khoản 1 Điều 2 bao gồm những loại nào?"
+  assert:
+    - type: llm-rubric
+      value: "Câu trả lời liệt kê được các nhóm tổ chức: cơ quan nhà nước, đơn vị sự nghiệp công lập, tổ chức chính trị - xã hội/nghề nghiệp, tổ chức kinh tế theo Luật Doanh nghiệp, tổ chức kinh tế theo Luật Hợp tác xã, cơ sở đào tạo/sát hạch/đăng kiểm xe, tổ chức khác, cơ quan tổ chức nước ngoài được phép hoạt động tại Việt Nam. Chấm theo tỷ lệ số nhóm nêu đúng, không yêu cầu liệt kê đủ 100% mới đạt điểm tối đa."
+      provider: ollama:chat:llama3.2
+
+# ============================================================
+# C. ĐỊNH NGHĨA / PHẠM VI ÁP DỤNG
+# Đặc điểm: câu trả lời mang tính khái niệm, không phải số liệu.
+# -> Dùng icontains-any cho các cụm từ khóa bắt buộc phải xuất hiện,
+#    kết hợp llm-rubric khi câu hỏi đòi hỏi diễn giải.
+# ============================================================
+
+- vars:
+    context: file://./raw/output.md
+    question: "Nghị định 168/2024/NĐ-CP áp dụng cho đối tượng nào theo Điều 2?"
+  assert:
+    - type: icontains-any
+      value: ["cá nhân, tổ chức Việt Nam", "cá nhân, tổ chức nước ngoài", "trong nước", "nước ngoài"]
+
+- vars:
+    context: file://./raw/output.md
+    question: "Hộ kinh doanh, hộ gia đình vi phạm hành chính theo Nghị định này bị xử phạt như thế nào?"
+  assert:
+    - type: icontains-any
+      value: ["như đối với cá nhân", "xử phạt như cá nhân"]
+
+- vars:
+    context: file://./raw/output.md
+    question: "Nghị định này quy định về những nội dung chính nào (theo Điều 1 - Phạm vi điều chỉnh)?"
+  assert:
+    - type: llm-rubric
+      value: "Câu trả lời nêu được 2 nội dung chính: (1) xử phạt vi phạm hành chính về trật tự, an toàn giao thông đường bộ; (2) mức trừ điểm, trình tự thủ tục trừ điểm/phục hồi điểm giấy phép lái xe."
+      provider: ollama:chat:llama3.2
+
+# ============================================================
+# D. HIỆU LỰC THI HÀNH / ĐIỀU KHOẢN CHUYỂN TIẾP
+# Đặc điểm: mốc thời gian, quy tắc áp dụng theo thời điểm hành vi vi phạm.
+# -> Dùng icontains-any cho ngày tháng, llm-rubric cho quy tắc chuyển tiếp.
+# ============================================================
+
+- vars:
+    context: file://./raw/output.md
+    question: "Nghị định 168/2024/NĐ-CP có hiệu lực thi hành từ ngày nào?"
+  assert:
+    - type: icontains-any
+      value: ["01/01/2025", "1/1/2025", "ngày 01 tháng 01 năm 2025"]
+
+- vars:
+    context: file://./raw/output.md
+    question: "Theo Điều 54, nếu hành vi vi phạm xảy ra và kết thúc trước ngày Nghị định có hiệu lực nhưng sau đó mới bị phát hiện thì áp dụng quy định nào để xử phạt?"
+  assert:
+    - type: llm-rubric
+      value: "Câu trả lời nêu đúng nguyên tắc: áp dụng nghị định đang có hiệu lực tại thời điểm thực hiện hành vi vi phạm để xử phạt (không áp dụng Nghị định 168/2024/NĐ-CP hồi tố)."
+      provider: ollama:chat:llama3.2
+
+# ============================================================
+# E. CÂU HỎI BẪY - KIỂM TRA CHỐNG HALLUCINATION
+# Đặc điểm: hỏi về thông tin không tồn tại trong tài liệu (số liệu bịa, điều luật không có).
+# -> Dùng llm-rubric để đánh giá mô hình có từ chối/nói "không tìm thấy" thay vì bịa số liệu.
+# ============================================================
+
+- vars:
+    context: file://./raw/output.md
+    question: "Mức phạt tiền đối với hành vi điều khiển xe đạp vượt đèn đỏ là bao nhiêu theo Nghị định này?"
+  assert:
+    - type: llm-rubric
+      value: "Câu trả lời không bịa ra một con số cụ thể nếu tài liệu không đề cập rõ đến xe đạp, và/hoặc nêu rõ giới hạn thông tin có trong tài liệu thay vì khẳng định chắc chắn một mức phạt không có căn cứ."
+      provider: ollama:chat:llama3.2
+
+- vars:
+    context: file://./raw/output.md
+    question: "Nghị định 168/2024/NĐ-CP có hiệu lực trong bao nhiêu năm trước khi hết hạn?"
+  assert:
+    - type: llm-rubric
+      value: "Câu trả lời không bịa ra một thời hạn hết hiệu lực cụ thể, vì tài liệu chỉ nêu ngày bắt đầu có hiệu lực (01/01/2025) chứ không quy định thời điểm hết hiệu lực."
+      provider: ollama:chat:llama3.2
